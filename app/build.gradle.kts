@@ -15,8 +15,8 @@ android {
         applicationId = "ca.cheuksblog.scrabblechecker"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,9 +39,14 @@ android {
     buildFeatures {
         compose = true
     }
+
+    androidResources {
+        noCompress.add("bin")
+    }
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

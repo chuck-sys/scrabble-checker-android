@@ -23,4 +23,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Scrabble Checker"
+include(":core")
 include(":app")
+include(":cli")

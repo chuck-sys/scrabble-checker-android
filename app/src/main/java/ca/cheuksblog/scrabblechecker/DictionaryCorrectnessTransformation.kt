@@ -25,7 +25,7 @@ class DictionaryCorrectnessTransformation(private val state: WordState): VisualT
                 for (result in wordRegex.findAll(text.text)) {
                     val word = result.value
                     builder.addStyle(
-                        style = if (current.dictionary.isValid(word.toUpperCase(Locale.current))) {
+                        style = if (current.dictionary.isValid(word.toUpperCase(Locale.current).toByteArray())) {
                             correctStyle
                         } else {
                             incorrectStyle

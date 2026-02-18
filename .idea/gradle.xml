@@ -10,6 +10,8 @@
           <set>
             <option value="/datadrive/csys/StudioProjects/ScrabbleChecker" />
             <option value="/datadrive/csys/StudioProjects/ScrabbleChecker/app" />
+            <option value="/datadrive/csys/StudioProjects/ScrabbleChecker/cli" />
+            <option value="/datadrive/csys/StudioProjects/ScrabbleChecker/core" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -20,6 +22,8 @@
           <set>
             <option value="/datadrive/csys/StudioProjects/ScrabbleChecker" />
             <option value="/datadrive/csys/StudioProjects/ScrabbleChecker/app" />
+            <option value="/datadrive/csys/StudioProjects/ScrabbleChecker/cli" />
+            <option value="/datadrive/csys/StudioProjects/ScrabbleChecker/core" />
           </set>
         </option>
       </GradleProjectSettings>

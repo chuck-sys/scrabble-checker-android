@@ -87,7 +87,7 @@ fun Dictionary(modifier: Modifier, wordViewModel: WordViewModel) {
                         is WordState.Success -> {
                             val trie = current.dictionary
                             areAllValid =
-                                text.toUpperCase(Locale.current).lines().all { trie.isValid(it) }
+                                text.toUpperCase(Locale.current).lines().all { trie.isValid(it.toByteArray()) }
                             Toast.makeText(
                                 context, if (areAllValid == true) {
                                     R.string.correct
@@ -96,7 +96,6 @@ fun Dictionary(modifier: Modifier, wordViewModel: WordViewModel) {
                                 }, Toast.LENGTH_SHORT
                             ).show()
                         }
-
                         else -> {
                             Toast.makeText(
                                 context, R.string.dict_not_loaded, Toast.LENGTH_SHORT
