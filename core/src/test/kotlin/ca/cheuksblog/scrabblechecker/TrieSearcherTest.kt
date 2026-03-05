@@ -20,6 +20,9 @@ class TrieSearcherTest {
         assertFalse(searcher.isValid("AAT".toByteArray()))
         assertTrue(searcher.isValid("AATMAN".toByteArray()))
         assertTrue(searcher.isValid("AATMANS".toByteArray()))
+        assertTrue(searcher.isValid("BALANCED".toByteArray()))
+        assertTrue(searcher.isValid("BALANCE".toByteArray()))
+        assertFalse(searcher.isValid("BALANCESS".toByteArray()))
         assertTrue(searcher.isValid("ZZZ".toByteArray()))
         assertTrue(searcher.isValid("ZZZS".toByteArray()))
     }
