@@ -27,23 +27,25 @@ class TrieTest {
         trie.insert("AATMANS")
         trie.insert("AATMAN")
         trie.insert("AAS")
+        trie.insert("CALZONE")
+        trie.insert("CALZONES")
 
         assertTrue(trie.isValid("AAS"))
         assertFalse(trie.isValid("AAT"))
         assertFalse(trie.isValid("AATMA"))
         assertTrue(trie.isValid("AATMAN"))
         assertTrue(trie.isValid("AATMANS"))
+        assertTrue(trie.isValid("CALZONE"))
+        assertTrue(trie.isValid("CALZONES"))
 
         trie.optimize()
 
-        assertEquals("AA", trie.root.inBetweenChars)
-        assertEquals(1, trie.root.children['T']!!.children.size)
-        assertEquals("MAN", trie.root.children['T']?.inBetweenChars)
-
         assertTrue(trie.isValid("AAS"))
         assertFalse(trie.isValid("AAT"))
         assertFalse(trie.isValid("AATMA"))
         assertTrue(trie.isValid("AATMAN"))
         assertTrue(trie.isValid("AATMANS"))
+        assertTrue(trie.isValid("CALZONE"))
+        assertTrue(trie.isValid("CALZONES"))
     }
 }

@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
     while (queue.isNotEmpty()) {
         n += 1
         val (node, previousPosition) = queue.removeFirst()
-        val canBeLeaf = node.children.values.all({ it.isEndpoint && it.inBetweenChars.isEmpty() })
+        val canBeLeaf = node.children.values.all({ it.isEndpoint && it.inBetweenChars.isEmpty() && it.children.isEmpty() })
         // bit 31 of the mask is for denoting the endpoint
         // bit 27-30 denoting length of in-between bits
         val mask = toChildMask(node.children) or
