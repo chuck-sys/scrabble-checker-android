@@ -4,6 +4,7 @@ import ca.cheuksblog.scrabblechecker.Trie.Node
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
+import kotlin.math.abs
 
 fun toChildMask(children: HashMap<Char, Node>): UInt {
     return children.keys.fold(0u, { m, c ->
@@ -25,14 +26,17 @@ fun main(args: Array<String>) {
     buffer.put("TRIE".toByteArray())
     buffer.put(1)
 
-    // DFS
-    val queue: ArrayDeque<Pair<Node, Int?>> = ArrayDeque()
-    queue.addLast(Pair(trie.root, null))
-    var largestDiff = 0
+    // BFS
+    val queue: ArrayDeque<Node> = ArrayDeque()
+    queue.addLast(trie.root)
+    val nodeToOffset = hashMapOf<Int, Int>()
+    val unknownChildLocations = arrayListOf<Pair<Int, Int>>()
+    var largestOffset = 0
     var n = 0
+    var knowns = 0
     while (queue.isNotEmpty()) {
         n += 1
-        val (node, previousPosition) = queue.removeFirst()
+        val node = queue.removeFirst()
         val canBeLeaf = node.children.values.all({ it.isEndpoint && it.inBetweenChars.isEmpty() && it.children.isEmpty() })
         // bit 31 of the mask is for denoting the endpoint
         // bit 27-30 denoting length of in-between bits
@@ -41,29 +45,48 @@ fun main(args: Array<String>) {
                 if (node.isEndpoint) {1u shl 31} else {0u} or
                 if (canBeLeaf) {1u shl 26} else {0u}
 
-        if (previousPosition != null) {
-            buffer.putInt(previousPosition, buffer.position() - previousPosition)
-
-            if (largestDiff < buffer.position() - previousPosition) {
-                largestDiff = buffer.position() - previousPosition
-            }
-        }
-
+        nodeToOffset[node.id] = buffer.position()
         buffer.putInt(mask.toInt())                                 // mask 4 bytes
         if (node.inBetweenChars.isNotEmpty()) {                          // characters in between
             buffer.put(node.inBetweenChars.toByteArray())
         }
 
         if (!canBeLeaf) {
-            for ((c, child) in node.children.toList().sortedBy { it.first }) {
-                queue.addLast(Pair(child, buffer.position()))            // all sorted children
-                buffer.putInt(0)
+            for ((_, child) in node.children.toList().sortedBy { it.first }) {
+                val childLocation = nodeToOffset[child.id]
+                if (childLocation == null) {
+                    unknownChildLocations.add(Pair(child.id, buffer.position()))
+                    buffer.putInt(0)
+                } else {
+                    buffer.putInt(childLocation - buffer.position())
+                    println("Known id: ${child.id} => $childLocation, from node id ${node.id}")
+                    knowns++
+                }
+
+                queue.addLast(child)            // all sorted children
             }
         }
     }
 
+    println("Unique offsets: ${nodeToOffset.size}")
+    println("We hit knowns $knowns times")
+
+    for ((id, offset) in unknownChildLocations) {
+        val childLocation = nodeToOffset[id]
+        if (childLocation == null) {
+            println("Could not get offset of node id = $id")
+            break
+        }
+
+        buffer.putInt(offset, childLocation - offset)
+
+        if (abs(childLocation - offset) > largestOffset) {
+            largestOffset = abs(childLocation - offset)
+        }
+    }
+
     println("Number of nodes: $n")
-    println("Largest byte offset: $largestDiff")
+    println("Largest byte offset: $largestOffset")
 
     val finalSize = buffer.position()
     buffer.force()

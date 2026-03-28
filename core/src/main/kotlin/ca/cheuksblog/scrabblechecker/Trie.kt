@@ -4,7 +4,8 @@ import java.io.File
 import kotlin.math.min
 
 class Trie(
-    val root: Node = Node(isEndpoint = false),
+    var nextUnusedId: Int = 1,
+    val root: Node = Node(id = 0, isEndpoint = false),
 ) {
     constructor(filename: String): this() {
         File(filename).forEachLine {
@@ -13,7 +14,9 @@ class Trie(
     }
 
     data class Node (
+        var id: Int = -1,
         var children: HashMap<Char, Node> = hashMapOf(),
+        var parents: HashMap<Char, Node> = hashMapOf(),
         var value: Char = ' ',
         var inBetweenChars: String = "",
         var isEndpoint: Boolean = false,
@@ -21,8 +24,9 @@ class Trie(
 
     fun insert(word: String) {
         word.fold(root) { node, c ->
-            (node.children[c] ?: Node(isEndpoint = false, value = c)).also {
+            (node.children[c] ?: Node(id = nextUnusedId++, isEndpoint = false, value = c)).also {
                 node.children[c] = it
+                it.parents[c] = node
             }
         }.isEndpoint = true
     }
@@ -66,5 +70,7 @@ class Trie(
 
     fun optimize() {
         root.collapse()
+
+
     }
 }

@@ -15,8 +15,6 @@ class TrieSearcherTest {
         val buffer = stream.channel.map(FileChannel.MapMode.READ_ONLY, 5, f.length() - 5)
         val searcher = TrieSearcher(buffer)
 
-        assertTrue(searcher.isValid("CALZONES".toByteArray()))
-        assertTrue(searcher.isValid("CALZONI".toByteArray()))
         assertTrue(searcher.isValid("AA".toByteArray()))
         assertTrue(searcher.isValid("AAL".toByteArray()))
         assertFalse(searcher.isValid("AAT".toByteArray()))
@@ -25,6 +23,8 @@ class TrieSearcherTest {
         assertTrue(searcher.isValid("BALANCED".toByteArray()))
         assertTrue(searcher.isValid("BALANCE".toByteArray()))
         assertFalse(searcher.isValid("BALANCESS".toByteArray()))
+        assertTrue(searcher.isValid("CALZONES".toByteArray()))
+        assertTrue(searcher.isValid("CALZONI".toByteArray()))
         assertTrue(searcher.isValid("ZZZ".toByteArray()))
         assertTrue(searcher.isValid("ZZZS".toByteArray()))
     }
