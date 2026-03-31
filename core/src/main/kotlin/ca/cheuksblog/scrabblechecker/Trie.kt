@@ -16,7 +16,7 @@ class Trie(
     data class Node (
         var id: Int = -1,
         var children: HashMap<Char, Node> = hashMapOf(),
-        var parents: HashMap<Char, Node> = hashMapOf(),
+        var parents: ArrayList<Node> = arrayListOf(),
         var value: Char = ' ',
         var inBetweenChars: String = "",
         var isEndpoint: Boolean = false,
@@ -26,7 +26,7 @@ class Trie(
         word.fold(root) { node, c ->
             (node.children[c] ?: Node(id = nextUnusedId++, isEndpoint = false, value = c)).also {
                 node.children[c] = it
-                it.parents[c] = node
+                it.parents.add(node)
             }
         }.isEndpoint = true
     }
@@ -56,6 +56,20 @@ class Trie(
         return node.isEndpoint && node.inBetweenChars.isEmpty()
     }
 
+    fun Node.countNodes(): UInt {
+        return 1u + children.values.sumOf { it.countNodes() }
+    }
+
+    fun Node.similarTo(n: Node): Boolean {
+        return isEndpoint == n.isEndpoint
+                && inBetweenChars == n.inBetweenChars
+                && value == n.value
+    }
+
+    fun Node.isLeaf(): Boolean {
+        return children.values.all({ it.children.isEmpty() })
+    }
+
     fun Node.collapse() {
         children.values.forEach { it.collapse() }
 
@@ -71,6 +85,57 @@ class Trie(
     fun optimize() {
         root.collapse()
 
+        // DFS for recursively finding and consolidating branches that are the same
+        // 1. Start from the leaves
+        // 2. If 2 leaves are the same, replace one of them
+        val stack: ArrayDeque<Node> = ArrayDeque()
+        stack.addLast(root)
+        val uniqueNodes: ArrayDeque<Node> = ArrayDeque()
+        while (!stack.isEmpty()) {
+            val n = stack.removeLast()
+            if (!n.isLeaf()) {
+                stack.addAll(n.children.values)
+                continue
+            }
 
+            var foundMatching = false
+            for (other in uniqueNodes) {
+                if (n.similarTo(other)) {
+                    other.parents.addAll(n.parents)
+
+                    for (parent in n.parents) {
+                        parent.children[n.value] = other
+                    }
+
+                    foundMatching = true
+                    break
+                }
+            }
+
+            if (!foundMatching) {
+                uniqueNodes.addLast(n)
+            }
+        }
+
+//        val dupeNodes = hashSetOf<Int>()
+        uniqueNodes.removeIf { it.parents.size == 1 }
+//        dupeNodes.addAll(uniqueNodes.map { it.id })
+
+        // 3. Check parents for the same, until we run out of unique nodes
+//        while (true) {
+//            for (n in uniqueNodes) {
+//                for (x in n.parents) {
+//                    for (other in n.parents) {
+//                        if (x.id == other.id) {
+//                            continue
+//                        }
+//
+//                        if (x.similarTo(other)) {
+//
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }

@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
     val buffer = file.channel.map(FileChannel.MapMode.READ_WRITE, 0, File(input).length())
 
     buffer.put("TRIE".toByteArray())
-    buffer.put(1)
+    buffer.put(2)
 
     // BFS
     val queue: ArrayDeque<Node> = ArrayDeque()
@@ -56,10 +56,9 @@ fun main(args: Array<String>) {
                 val childLocation = nodeToOffset[child.id]
                 if (childLocation == null) {
                     unknownChildLocations.add(Pair(child.id, buffer.position()))
-                    buffer.putInt(0)
+                    buffer.put(byteArrayOf(0, 0, 0))
                 } else {
-                    buffer.putInt(childLocation - buffer.position())
-                    println("Known id: ${child.id} => $childLocation, from node id ${node.id}")
+                    buffer.put(intTo3Bytes(childLocation - buffer.position()))
                     knowns++
                 }
 
@@ -78,7 +77,7 @@ fun main(args: Array<String>) {
             break
         }
 
-        buffer.putInt(offset, childLocation - offset)
+        buffer.put(offset, intTo3Bytes(childLocation - offset))
 
         if (abs(childLocation - offset) > largestOffset) {
             largestOffset = abs(childLocation - offset)

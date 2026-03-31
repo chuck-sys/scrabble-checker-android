@@ -75,10 +75,11 @@ class TrieSearcher(private val buffer: ByteBuffer) {
         }
 
         val offset = countOnesUntil(childrenMask.toInt(), (word[i] - 0x41))
-        buffer.position(buffer.position() + offset * 4)
+        buffer.position(buffer.position() + offset * 3)
 
-        val jumpToOffset = buffer.getInt()
-        buffer.position(buffer.position() + jumpToOffset - 4)
+        val jumpToOffset = ByteArray(size = 3)
+        buffer.get(jumpToOffset)
+        buffer.position(buffer.position() + bytesToInt(jumpToOffset) - 3)
 
         return isValidHelper(word, i + 1)
     }

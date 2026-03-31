@@ -17,8 +17,13 @@ class TrieTest {
         trie.optimize()
 
         assertTrue(trie.isValid("AAL"))
-        assertTrue(trie.isValid("AATMANS"))
         assertFalse(trie.isValid("AAT"))
+        assertTrue(trie.isValid("AAS"))
+        assertFalse(trie.isValid("AATMA"))
+        assertTrue(trie.isValid("AATMAN"))
+        assertTrue(trie.isValid("AATMANS"))
+        assertTrue(trie.isValid("CALZONE"))
+        assertTrue(trie.isValid("CALZONES"))
     }
 
     @Test
